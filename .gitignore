@@ -1,7 +1,38 @@
-config/devices.json
-data/*.csv
-data/*.png
-data/*.txt
-__pycache__/
-.venv/
+# macOS
 .DS_Store
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Local configuration files
+config/devices.json
+.env
+
+# Measurement data
+data/*.csv
+data/*.txt
+data/*.png
+data/*.jpg
+data/*.npy
+
+# Logs
+*.log
+
+# IDE / Editor
+.vscode/
+.idea/
