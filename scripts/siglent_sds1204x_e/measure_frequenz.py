@@ -1,61 +1,37 @@
 # measure_frequenz.py
-# Read frequency from Siglent SDS1204X-E channel 1 via LAN/SCPI
 
 import socket
-import re
-
-IP = "192.168.2.117"
-PORT = 5025
-
-CHANNEL = "C1"
+from config import OSCILLOSCOPE_IP, OSCILLOSCOPE_PORT, TIMEOUT
 
 
-def send_scpi(command):
-    """Send one SCPI command to the oscilloscope and return the response."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(3)
-        sock.connect((IP, PORT))
-        sock.sendall((command + "\n").encode())
-        response = sock.recv(4096).decode(errors="ignore").strip()
-        return response
-
-
-def extract_frequency(response):
+def extract_value(answer):
     """
-    Extract frequency value from Siglent response.
-
-    Typical response:
-    C1:PAVA FREQ,1.000000E+03Hz
+    Extrahiert den Zahlenwert aus der Antwort des Oszilloskops.
+    Beispiel:
+    C1:PAVA FREQ,9.998900E+02Hz  ->  999.89
     """
-    match = re.search(r"([-+]?\d+\.?\d*(?:E[-+]?\d+)?)\s*Hz", response, re.IGNORECASE)
 
-    if match:
-        return float(match.group(1))
+    value_part = answer.split(",")[1]       # alles nach dem Komma
+    value_part = value_part.replace("Hz", "")
+    value_part = value_part.strip()
 
-    return None
+    return float(value_part)
+
+
+def measure_frequency(channel=1):
+    command = f"C{channel}:PAVA? FREQ"
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as osc:
+        osc.settimeout(TIMEOUT)
+        osc.connect((OSCILLOSCOPE_IP, OSCILLOSCOPE_PORT))
+
+        osc.sendall((command + "\n").encode())
+
+        answer = osc.recv(1024).decode().strip()
+
+    return extract_value(answer)
 
 
 if __name__ == "__main__":
-    print("Reading frequency from oscilloscope...")
-    print(f"Device IP: {IP}")
-    print(f"Channel: {CHANNEL}")
-    print()
-
-    response = send_scpi(f"{CHANNEL}:PAVA? FREQ")
-
-    print("Raw response:")
-    print(response)
-    print()
-
-    frequency = extract_frequency(response)
-
-    if frequency is not None:
-        print(f"Frequency: {frequency:.3f} Hz")
-        print(f"Frequency: {frequency / 1000:.6f} kHz")
-    else:
-        print("No valid frequency value found.")
-        print("Check:")
-        print("- Is the signal connected to CH1?")
-        print("- Is CH1 switched on?")
-        print("- Is the trigger stable?")
-        print("- Is the signal periodic?")
+    frequenz = measure_frequency()
+    print(f"Frequenz: {frequenz:.2f} Hz")
