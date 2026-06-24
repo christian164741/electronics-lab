@@ -1,4 +1,4 @@
-# config.py
+# oscilloscope_config.py
 OSCILLOSCOPE_IP = "192.168.2.117"
 OSCILLOSCOPE_PORT = 5025
 TIMEOUT = 5

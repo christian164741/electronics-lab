@@ -1,7 +1,7 @@
 # measure_frequenz.py
 
 import socket
-from config.oscilloskope_config import OSCILLOSCOPE_IP, OSCILLOSCOPE_PORT, TIMEOUT
+from configs.oscilloscope_config import OSCILLOSCOPE_IP, OSCILLOSCOPE_PORT, TIMEOUT
 
 
 def extract_value(answer):
