@@ -25,7 +25,7 @@ from oscilloscope.set_vertical import (
 
 
 def setup_rc_charge(
-    channel=1,
+    channel=2,
     supply_voltage="5V",
     trigger_level="3.16V",
     time_division="100MS",
